@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fake News Detector — AI-Powered News Verification</title>
+    <meta name="description" content="Detect fake news articles using advanced NLP and Machine Learning. Paste any news article to verify its authenticity.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: #0a0e1a;
+            --bg-secondary: #111827;
+            --bg-card: rgba(17, 24, 39, 0.7);
+            --border-color: rgba(99, 102, 241, 0.2);
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --accent-blue: #6366f1;
+            --accent-blue-glow: rgba(99, 102, 241, 0.4);
+            --accent-green: #10b981;
+            --accent-green-glow: rgba(16, 185, 129, 0.3);
+            --accent-red: #ef4444;
+            --accent-red-glow: rgba(239, 68, 68, 0.3);
+            --gradient-1: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #a78bfa 100%);
+            --gradient-2: linear-gradient(135deg, #0a0e1a 0%, #1e1b4b 100%);
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--gradient-2);
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Animated background */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            overflow: hidden;
+            pointer-events: none;
+        }
+
+        .bg-animation .orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.15;
+            animation: float 20s infinite ease-in-out;
+        }
+
+        .bg-animation .orb:nth-child(1) {
+            width: 500px;
+            height: 500px;
+            background: #6366f1;
+            top: -10%;
+            left: -5%;
+            animation-delay: 0s;
+        }
+
+        .bg-animation .orb:nth-child(2) {
+            width: 400px;
+            height: 400px;
+            background: #8b5cf6;
+            bottom: -10%;
+            right: -5%;
+            animation-delay: -7s;
+        }
+
+        .bg-animation .orb:nth-child(3) {
+            width: 300px;
+            height: 300px;
+            background: #a78bfa;
+            top: 40%;
+            left: 50%;
+            animation-delay: -14s;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            25% { transform: translate(50px, -30px) scale(1.05); }
+            50% { transform: translate(-20px, 40px) scale(0.95); }
+            75% { transform: translate(30px, 20px) scale(1.02); }
+        }
+
+        /* Container */
+        .container {
+            position: relative;
+            z-index: 1;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 40px 24px;
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            margin-bottom: 48px;
+        }
+
+        .header .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 16px;
+            border-radius: 100px;
+            background: rgba(99, 102, 241, 0.15);
+            border: 1px solid rgba(99, 102, 241, 0.3);
+            color: #a78bfa;
+            font-size: 0.8rem;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            margin-bottom: 20px;
+        }
+
+        .badge .pulse {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #10b981;
+            animation: pulse-dot 2s infinite;
+        }
+
+        @keyframes pulse-dot {
+            0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4); }
+            50% { opacity: 0.7; box-shadow: 0 0 0 8px rgba(16, 185, 129, 0); }
+        }
+
+        .header h1 {
+            font-size: 2.8rem;
+            font-weight: 800;
+            background: var(--gradient-1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            line-height: 1.2;
+            margin-bottom: 12px;
+        }
+
+        .header p {
+            color: var(--text-secondary);
+            font-size: 1.05rem;
+            line-height: 1.6;
+            max-width: 550px;
+            margin: 0 auto;
+        }
+
+        /* Main Card */
+        .card {
+            background: var(--bg-card);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 36px;
+            margin-bottom: 24px;
+            transition: border-color 0.3s ease;
+        }
+
+        .card:hover {
+            border-color: rgba(99, 102, 241, 0.4);
+        }
+
+        .card-title {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .card-title svg {
+            width: 18px;
+            height: 18px;
+            color: var(--accent-blue);
+        }
+
+        /* Textarea */
+        .textarea-wrapper {
+            position: relative;
+        }
+
+        #newsInput {
+            width: 100%;
+            min-height: 200px;
+            padding: 20px;
+            border: 1px solid rgba(99, 102, 241, 0.2);
+            border-radius: 14px;
+            background: rgba(15, 23, 42, 0.6);
+            color: var(--text-primary);
+            font-family: 'Inter', sans-serif;
+            font-size: 0.95rem;
+            line-height: 1.7;
+            resize: vertical;
+            transition: all 0.3s ease;
+            outline: none;
+        }
+
+        #newsInput:focus {
+            border-color: var(--accent-blue);
+            box-shadow: 0 0 0 3px var(--accent-blue-glow);
+        }
+
+        #newsInput::placeholder {
+            color: #475569;
+        }
+
+        .char-count {
+            position: absolute;
+            bottom: 12px;
+            right: 16px;
+            font-size: 0.75rem;
+            color: #475569;
+        }
+
+        /* Button */
+        .btn-analyze {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            width: 100%;
+            padding: 16px 32px;
+            margin-top: 20px;
+            border: none;
+            border-radius: 14px;
+            background: var(--gradient-1);
+            color: white;
+            font-family: 'Inter', sans-serif;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-analyze:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px var(--accent-blue-glow);
+        }
+
+        .btn-analyze:active {
+            transform: translateY(0);
+        }
+
+        .btn-analyze:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-analyze .spinner {
+            display: none;
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 0.6s linear infinite;
+        }
+
+        .btn-analyze.loading .spinner {
+            display: block;
+        }
+
+        .btn-analyze.loading .btn-text {
+            display: none;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Result Card */
+        .result-card {
+            display: none;
+            animation: slideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .result-card.show {
+            display: block;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .result-inner {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+            padding: 12px 0;
+        }
+
+        .result-icon {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.2rem;
+            animation: popIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) 0.2s both;
+        }
+
+        @keyframes popIn {
+            from { transform: scale(0); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        .result-icon.real {
+            background: rgba(16, 185, 129, 0.15);
+            border: 2px solid rgba(16, 185, 129, 0.3);
+        }
+
+        .result-icon.fake {
+            background: rgba(239, 68, 68, 0.15);
+            border: 2px solid rgba(239, 68, 68, 0.3);
+        }
+
+        .result-label {
+            font-size: 1.8rem;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+        }
+
+        .result-label.real { color: var(--accent-green); }
+        .result-label.fake { color: var(--accent-red); }
+
+        .confidence-bar-wrapper {
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .confidence-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        .confidence-bar {
+            width: 100%;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 100px;
+            overflow: hidden;
+        }
+
+        .confidence-fill {
+            height: 100%;
+            border-radius: 100px;
+            transition: width 1s cubic-bezier(0.16, 1, 0.3, 1);
+            width: 0;
+        }
+
+        .confidence-fill.real {
+            background: linear-gradient(90deg, #10b981, #34d399);
+        }
+
+        .confidence-fill.fake {
+            background: linear-gradient(90deg, #ef4444, #f87171);
+        }
+
+        /* Error */
+        .error-message {
+            display: none;
+            padding: 14px 20px;
+            border-radius: 12px;
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: #fca5a5;
+            font-size: 0.9rem;
+            margin-top: 16px;
+            animation: slideUp 0.3s ease;
+        }
+
+        .error-message.show {
+            display: block;
+        }
+
+        /* Sample articles */
+        .samples {
+            margin-top: 8px;
+        }
+
+        .samples-title {
+            font-size: 0.85rem;
+            color: #475569;
+            margin-bottom: 12px;
+        }
+
+        .sample-chips {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .sample-chip {
+            padding: 8px 16px;
+            border-radius: 100px;
+            background: rgba(99, 102, 241, 0.08);
+            border: 1px solid rgba(99, 102, 241, 0.15);
+            color: #94a3b8;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .sample-chip:hover {
+            background: rgba(99, 102, 241, 0.15);
+            border-color: rgba(99, 102, 241, 0.3);
+            color: #c7d2fe;
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 32px 0;
+            color: #334155;
+            font-size: 0.8rem;
+        }
+
+        .footer a {
+            color: #6366f1;
+            text-decoration: none;
+        }
+
+        /* Stats */
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 20px 12px;
+            background: var(--bg-card);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: 800;
+            background: var(--gradient-1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .stat-label {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            margin-top: 4px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Responsive */
+        @media (max-width: 640px) {
+            .container { padding: 24px 16px; }
+            .header h1 { font-size: 2rem; }
+            .card { padding: 24px; }
+            .stats { grid-template-columns: repeat(3, 1fr); gap: 8px; }
+            .stat-item { padding: 14px 8px; }
+            .stat-value { font-size: 1.2rem; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Background Animation -->
+    <div class="bg-animation">
+        <div class="orb"></div>
+        <div class="orb"></div>
+        <div class="orb"></div>
+    </div>
+
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="badge">
+                <span class="pulse"></span>
+                AI-Powered Detection
+            </div>
+            <h1>Fake News Detector</h1>
+            <p>Verify the authenticity of news articles using advanced Natural Language Processing and Machine Learning</p>
+        </header>
+
+        <!-- Stats -->
+        <div class="stats">
+            <div class="stat-item">
+                <div class="stat-value">NLP</div>
+                <div class="stat-label">Text Analysis</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value">TF-IDF</div>
+                <div class="stat-label">Vectorization</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value">ML</div>
+                <div class="stat-label">Classification</div>
+            </div>
+        </div>
+
+        <!-- Input Card -->
+        <div class="card">
+            <div class="card-title">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 7.5h1.5m-1.5 3h1.5m-7.5 3h7.5m-7.5 3h7.5m3-9h3.375c.621 0 1.125.504 1.125 1.125V18a2.25 2.25 0 01-2.25 2.25M16.5 7.5V18a2.25 2.25 0 002.25 2.25M16.5 7.5V4.875c0-.621-.504-1.125-1.125-1.125H4.125C3.504 3.75 3 4.254 3 4.875V18a2.25 2.25 0 002.25 2.25h13.5M6 7.5h3v3H6v-3z"/>
+                </svg>
+                Paste News Article
+            </div>
+            <div class="textarea-wrapper">
+                <textarea 
+                    id="newsInput" 
+                    placeholder="Paste the full news article text here to check if it's real or fake..."
+                    spellcheck="false"
+                ></textarea>
+                <span class="char-count" id="charCount">0 chars</span>
+            </div>
+
+            <div class="samples">
+                <div class="samples-title">Try a sample:</div>
+                <div class="sample-chips">
+                    <span class="sample-chip" onclick="loadSample('real')">📰 Real News Sample</span>
+                    <span class="sample-chip" onclick="loadSample('fake')">🚨 Fake News Sample</span>
+                </div>
+            </div>
+
+            <button class="btn-analyze" id="analyzeBtn" onclick="analyzNews()">
+                <div class="spinner"></div>
+                <span class="btn-text">🔍 Analyze Article</span>
+            </button>
+
+            <div class="error-message" id="errorMsg"></div>
+        </div>
+
+        <!-- Result Card -->
+        <div class="card result-card" id="resultCard">
+            <div class="result-inner">
+                <div class="result-icon" id="resultIcon"></div>
+                <div class="result-label" id="resultLabel"></div>
+                <div class="confidence-bar-wrapper">
+                    <div class="confidence-label">
+                        <span>Confidence</span>
+                        <span id="confidenceValue">0%</span>
+                    </div>
+                    <div class="confidence-bar">
+                        <div class="confidence-fill" id="confidenceFill"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>Powered by Machine Learning &amp; NLP · Fake News Detection Project</p>
+        </footer>
+    </div>
+
+    <script>
+        const newsInput = document.getElementById('newsInput');
+        const charCount = document.getElementById('charCount');
+        const analyzeBtn = document.getElementById('analyzeBtn');
+        const errorMsg = document.getElementById('errorMsg');
+        const resultCard = document.getElementById('resultCard');
+
+        // Character counter
+        newsInput.addEventListener('input', () => {
+            charCount.textContent = `${newsInput.value.length} chars`;
+        });
+
+        // Sample articles
+        const samples = {
+            real: `WASHINGTON (Reuters) - The U.S. Senate passed a sweeping tax overhaul bill early Saturday, moving President Donald Trump and Republicans a big step closer to enacting the most ambitious rewrite of the tax code in three decades. The vote was 51-49, with only one Republican, Bob Corker of Tennessee, breaking ranks to vote against a bill that would add an estimated $1.4 trillion to the $20 trillion national debt over 10 years while slashing taxes for corporations and temporarily reducing them for most individuals.`,
+            fake: `BREAKING: Scientists discover that the moon is actually made of cheese! NASA has been hiding this fact for decades. Multiple whistleblowers from within the agency have come forward with shocking evidence that the Apollo missions were actually cheese-collecting expeditions. The government has been stockpiling lunar cheese in secret underground bunkers across the country.`
+        };
+
+        function loadSample(type) {
+            newsInput.value = samples[type];
+            charCount.textContent = `${newsInput.value.length} chars`;
+            newsInput.focus();
+        }
+
+        // Analyze function
+        async function analyzNews() {
+            const text = newsInput.value.trim();
+
+            // Hide previous results
+            resultCard.classList.remove('show');
+            errorMsg.classList.remove('show');
+
+            if (!text) {
+                showError('Please paste a news article to analyze.');
+                return;
+            }
+
+            if (text.length < 10) {
+                showError('Please enter a longer article (at least 10 characters).');
+                return;
+            }
+
+            // Show loading state
+            analyzeBtn.classList.add('loading');
+            analyzeBtn.disabled = true;
+
+            try {
+                const response = await fetch('/predict', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ text })
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    showError(data.error || 'Something went wrong. Please try again.');
+                    return;
+                }
+
+                showResult(data);
+            } catch (err) {
+                showError('Connection error. Make sure the server is running.');
+            } finally {
+                analyzeBtn.classList.remove('loading');
+                analyzeBtn.disabled = false;
+            }
+        }
+
+        function showResult(data) {
+            const icon = document.getElementById('resultIcon');
+            const label = document.getElementById('resultLabel');
+            const confidenceValue = document.getElementById('confidenceValue');
+            const confidenceFill = document.getElementById('confidenceFill');
+
+            const isReal = data.prediction === 'Real';
+
+            // Set icon
+            icon.className = `result-icon ${isReal ? 'real' : 'fake'}`;
+            icon.textContent = isReal ? '✅' : '⚠️';
+
+            // Set label
+            label.className = `result-label ${isReal ? 'real' : 'fake'}`;
+            label.textContent = isReal ? 'REAL NEWS' : 'FAKE NEWS';
+
+            // Set confidence
+            const conf = data.confidence || 0;
+            confidenceValue.textContent = `${conf}%`;
+            confidenceFill.className = `confidence-fill ${isReal ? 'real' : 'fake'}`;
+
+            // Animate confidence bar
+            setTimeout(() => {
+                confidenceFill.style.width = `${conf}%`;
+            }, 100);
+
+            // Show card
+            resultCard.classList.add('show');
+
+            // Scroll to result
+            resultCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+
+        function showError(msg) {
+            errorMsg.textContent = msg;
+            errorMsg.classList.add('show');
+        }
+
+        // Allow Ctrl+Enter to analyze
+        newsInput.addEventListener('keydown', (e) => {
+            if (e.ctrlKey && e.key === 'Enter') {
+                analyzNews();
+            }
+        });
+    </script>
+</body>
+</html>
