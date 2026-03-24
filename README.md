@@ -43,7 +43,7 @@ FAKENWESDETECTION/
 
 ---
 
-## 🚀 Getting Started
+##  Getting Started
 
 ### 1. Install Dependencies
 
@@ -88,7 +88,7 @@ jupyter notebook fake_news_detection.ipynb
 
 ---
 
-## 🧪 Technologies Used
+##  Technologies Used
 
 | Technology | Purpose |
 |------------|---------|
@@ -102,7 +102,7 @@ jupyter notebook fake_news_detection.ipynb
 
 ---
 
-## 📊 ML Algorithms
+## ML Algorithms
 
 - **Multinomial Naive Bayes** – Probabilistic classifier based on Bayes' theorem
 - **Logistic Regression** – Linear model for binary classification
@@ -119,7 +119,7 @@ jupyter notebook fake_news_detection.ipynb
 
 ---
 
-## 📈 Expected Results
+## Expected Results
 
 - Model accuracy: **~90%+**
 - Generated visualizations include:
