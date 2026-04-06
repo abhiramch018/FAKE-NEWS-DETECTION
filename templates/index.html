@@ -98,15 +98,15 @@
         .container {
             position: relative;
             z-index: 1;
-            max-width: 800px;
+            max-width: 1200px;
             margin: 0 auto;
-            padding: 40px 24px;
+            padding: 24px 40px;
         }
 
         /* Header */
         .header {
             text-align: center;
-            margin-bottom: 48px;
+            margin-bottom: 20px;
         }
 
         .header .badge {
@@ -139,22 +139,30 @@
         }
 
         .header h1 {
-            font-size: 2.8rem;
+            font-size: 2.2rem;
             font-weight: 800;
             background: var(--gradient-1);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
             line-height: 1.2;
-            margin-bottom: 12px;
+            margin-bottom: 8px;
         }
 
         .header p {
             color: var(--text-secondary);
-            font-size: 1.05rem;
-            line-height: 1.6;
-            max-width: 550px;
+            font-size: 0.95rem;
+            line-height: 1.5;
+            max-width: 600px;
             margin: 0 auto;
+        }
+
+        /* Two-column layout */
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            align-items: start;
         }
 
         /* Main Card */
@@ -164,8 +172,7 @@
             -webkit-backdrop-filter: blur(20px);
             border: 1px solid var(--border-color);
             border-radius: 20px;
-            padding: 36px;
-            margin-bottom: 24px;
+            padding: 28px;
             transition: border-color 0.3s ease;
         }
 
@@ -196,15 +203,16 @@
 
         #newsInput {
             width: 100%;
-            min-height: 200px;
-            padding: 20px;
+            min-height: 140px;
+            max-height: 300px;
+            padding: 16px;
             border: 1px solid rgba(99, 102, 241, 0.2);
             border-radius: 14px;
             background: rgba(15, 23, 42, 0.6);
             color: var(--text-primary);
             font-family: 'Inter', sans-serif;
-            font-size: 0.95rem;
-            line-height: 1.7;
+            font-size: 0.9rem;
+            line-height: 1.6;
             resize: vertical;
             transition: all 0.3s ease;
             outline: none;
@@ -234,8 +242,8 @@
             justify-content: center;
             gap: 10px;
             width: 100%;
-            padding: 16px 32px;
-            margin-top: 20px;
+            padding: 14px 28px;
+            margin-top: 16px;
             border: none;
             border-radius: 14px;
             background: var(--gradient-1);
@@ -293,7 +301,29 @@
         }
 
         .result-card.show {
-            display: block;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .result-card.waiting {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 200px;
+        }
+
+        .result-placeholder {
+            text-align: center;
+            color: #475569;
+            font-size: 0.9rem;
+        }
+
+        .result-placeholder svg {
+            width: 48px;
+            height: 48px;
+            margin-bottom: 12px;
+            opacity: 0.3;
         }
 
         @keyframes slideUp {
@@ -311,18 +341,19 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 20px;
-            padding: 12px 0;
+            gap: 16px;
+            padding: 8px 0;
+            width: 100%;
         }
 
         .result-icon {
-            width: 80px;
-            height: 80px;
+            width: 64px;
+            height: 64px;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 2.2rem;
+            font-size: 1.8rem;
             animation: popIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) 0.2s both;
         }
 
@@ -342,7 +373,7 @@
         }
 
         .result-label {
-            font-size: 1.8rem;
+            font-size: 1.5rem;
             font-weight: 800;
             letter-spacing: -0.5px;
         }
@@ -440,7 +471,7 @@
         /* Footer */
         .footer {
             text-align: center;
-            padding: 32px 0;
+            padding: 16px 0;
             color: #334155;
             font-size: 0.8rem;
         }
@@ -454,13 +485,13 @@
         .stats {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 16px;
-            margin-bottom: 24px;
+            gap: 12px;
+            margin-bottom: 20px;
         }
 
         .stat-item {
             text-align: center;
-            padding: 20px 12px;
+            padding: 14px 12px;
             background: var(--bg-card);
             backdrop-filter: blur(20px);
             border: 1px solid var(--border-color);
@@ -485,12 +516,18 @@
         }
 
         /* Responsive */
+        @media (max-width: 900px) {
+            .main-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
         @media (max-width: 640px) {
-            .container { padding: 24px 16px; }
-            .header h1 { font-size: 2rem; }
-            .card { padding: 24px; }
+            .container { padding: 16px; }
+            .header h1 { font-size: 1.8rem; }
+            .card { padding: 20px; }
             .stats { grid-template-columns: repeat(3, 1fr); gap: 8px; }
-            .stat-item { padding: 14px 8px; }
+            .stat-item { padding: 10px 8px; }
             .stat-value { font-size: 1.2rem; }
         }
     </style>
@@ -530,51 +567,60 @@
             </div>
         </div>
 
-        <!-- Input Card -->
-        <div class="card">
-            <div class="card-title">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 7.5h1.5m-1.5 3h1.5m-7.5 3h7.5m-7.5 3h7.5m3-9h3.375c.621 0 1.125.504 1.125 1.125V18a2.25 2.25 0 01-2.25 2.25M16.5 7.5V18a2.25 2.25 0 002.25 2.25M16.5 7.5V4.875c0-.621-.504-1.125-1.125-1.125H4.125C3.504 3.75 3 4.254 3 4.875V18a2.25 2.25 0 002.25 2.25h13.5M6 7.5h3v3H6v-3z"/>
-                </svg>
-                Paste News Article
-            </div>
-            <div class="textarea-wrapper">
-                <textarea 
-                    id="newsInput" 
-                    placeholder="Paste the full news article text here to check if it's real or fake..."
-                    spellcheck="false"
-                ></textarea>
-                <span class="char-count" id="charCount">0 chars</span>
-            </div>
-
-            <div class="samples">
-                <div class="samples-title">Try a sample:</div>
-                <div class="sample-chips">
-                    <span class="sample-chip" onclick="loadSample('real')">📰 Real News Sample</span>
-                    <span class="sample-chip" onclick="loadSample('fake')">🚨 Fake News Sample</span>
+        <!-- Main Two-Column Grid -->
+        <div class="main-grid">
+            <!-- Input Card -->
+            <div class="card">
+                <div class="card-title">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 7.5h1.5m-1.5 3h1.5m-7.5 3h7.5m-7.5 3h7.5m3-9h3.375c.621 0 1.125.504 1.125 1.125V18a2.25 2.25 0 01-2.25 2.25M16.5 7.5V18a2.25 2.25 0 002.25 2.25M16.5 7.5V4.875c0-.621-.504-1.125-1.125-1.125H4.125C3.504 3.75 3 4.254 3 4.875V18a2.25 2.25 0 002.25 2.25h13.5M6 7.5h3v3H6v-3z"/>
+                    </svg>
+                    Paste News Article
                 </div>
+                <div class="textarea-wrapper">
+                    <textarea 
+                        id="newsInput" 
+                        placeholder="Paste the full news article text here to check if it's real or fake..."
+                        spellcheck="false"
+                    ></textarea>
+                    <span class="char-count" id="charCount">0 chars</span>
+                </div>
+
+                <div class="samples">
+                    <div class="samples-title">Try a sample:</div>
+                    <div class="sample-chips">
+                        <span class="sample-chip" onclick="loadSample('real')">📰 Real News Sample</span>
+                        <span class="sample-chip" onclick="loadSample('fake')">🚨 Fake News Sample</span>
+                    </div>
+                </div>
+
+                <button class="btn-analyze" id="analyzeBtn" onclick="analyzNews()">
+                    <div class="spinner"></div>
+                    <span class="btn-text">🔍 Analyze Article</span>
+                </button>
+
+                <div class="error-message" id="errorMsg"></div>
             </div>
 
-            <button class="btn-analyze" id="analyzeBtn" onclick="analyzNews()">
-                <div class="spinner"></div>
-                <span class="btn-text">🔍 Analyze Article</span>
-            </button>
-
-            <div class="error-message" id="errorMsg"></div>
-        </div>
-
-        <!-- Result Card -->
-        <div class="card result-card" id="resultCard">
-            <div class="result-inner">
-                <div class="result-icon" id="resultIcon"></div>
-                <div class="result-label" id="resultLabel"></div>
-                <div class="confidence-bar-wrapper">
-                    <div class="confidence-label">
-                        <span>Confidence</span>
-                        <span id="confidenceValue">0%</span>
-                    </div>
-                    <div class="confidence-bar">
-                        <div class="confidence-fill" id="confidenceFill"></div>
+            <!-- Result Card -->
+            <div class="card result-card waiting" id="resultCard">
+                <div class="result-placeholder" id="resultPlaceholder">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M9.75 3.104v5.714a2.25 2.25 0 01-.659 1.591L5 14.5M9.75 3.104c-.251.023-.501.05-.75.082m.75-.082a24.301 24.301 0 014.5 0m0 0v5.714c0 .597.237 1.17.659 1.591L19.8 15.3M14.25 3.104c.251.023.501.05.75.082M19.8 15.3l-1.57.393A9.065 9.065 0 0112 15a9.065 9.065 0 00-6.23.693L5 14.5m14.8.8l1.402 1.402c1.232 1.232.65 3.318-1.067 3.611A48.309 48.309 0 0112 21c-2.773 0-5.491-.235-8.135-.687-1.718-.293-2.3-2.379-1.067-3.61L5 14.5" />
+                    </svg>
+                    <p>Paste an article and click<br><strong>Analyze</strong> to see results here</p>
+                </div>
+                <div class="result-inner" id="resultInner" style="display: none;">
+                    <div class="result-icon" id="resultIcon"></div>
+                    <div class="result-label" id="resultLabel"></div>
+                    <div class="confidence-bar-wrapper">
+                        <div class="confidence-label">
+                            <span>Confidence</span>
+                            <span id="confidenceValue">0%</span>
+                        </div>
+                        <div class="confidence-bar">
+                            <div class="confidence-fill" id="confidenceFill"></div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -616,6 +662,9 @@
 
             // Hide previous results
             resultCard.classList.remove('show');
+            resultCard.classList.add('waiting');
+            document.getElementById('resultPlaceholder').style.display = '';
+            document.getElementById('resultInner').style.display = 'none';
             errorMsg.classList.remove('show');
 
             if (!text) {
@@ -682,10 +731,10 @@
             }, 100);
 
             // Show card
+            document.getElementById('resultPlaceholder').style.display = 'none';
+            document.getElementById('resultInner').style.display = '';
+            resultCard.classList.remove('waiting');
             resultCard.classList.add('show');
-
-            // Scroll to result
-            resultCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
         }
 
         function showError(msg) {

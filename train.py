@@ -27,6 +27,8 @@ from src.visualizer import (
     plot_metrics_comparison,
     plot_feature_importance,
     plot_label_distribution,
+    plot_model_performance_dark,
+    plot_confusion_matrix_dark,
 )
 
 
@@ -97,6 +99,15 @@ def main():
     plot_accuracy_comparison(all_metrics, "outputs/accuracy_comparison.png")
     plot_all_confusion_matrices(all_metrics, "outputs")
     plot_metrics_comparison(all_metrics, "outputs/metrics_comparison.png")
+
+    # Dark-themed charts for GitHub README
+    plot_model_performance_dark(all_metrics, "outputs/model_performance.png")
+    # Generate dark confusion matrix for the best model
+    plot_confusion_matrix_dark(
+        all_metrics[best_name]["confusion_matrix"],
+        best_name,
+        "outputs/confusion_matrix.png",
+    )
 
     # Feature importance for Logistic Regression
     if "Logistic Regression" in models:

@@ -242,3 +242,85 @@ def plot_label_distribution(df, save_path="outputs/label_distribution.png"):
     plt.savefig(save_path, dpi=150, bbox_inches="tight")
     plt.close()
     print(f"  Label distribution chart saved to {save_path}")
+
+
+def plot_model_performance_dark(all_metrics, save_path="outputs/model_performance.png"):
+    """
+    Create a dark-themed grouped bar chart comparing all metrics across models.
+    Designed for GitHub README embedding.
+
+    Args:
+        all_metrics: Dictionary of model name -> metrics
+        save_path: Path to save the plot
+    """
+    os.makedirs(os.path.dirname(save_path), exist_ok=True)
+
+    plt.style.use("dark_background")
+
+    model_names = list(all_metrics.keys())
+    metric_keys = ["accuracy", "precision", "recall", "f1_score"]
+    metric_labels = ["Accuracy", "Precision", "Recall", "F1 Score"]
+
+    x = np.arange(len(model_names))
+    width = 0.18
+    colors = ["#6366f1", "#10b981", "#f59e0b", "#ef4444"]
+
+    fig, ax = plt.subplots(figsize=(8, 5))
+
+    for i, (key, label) in enumerate(zip(metric_keys, metric_labels)):
+        values = [all_metrics[name][key] for name in model_names]
+        bars = ax.bar(x + i * width, values, width, label=label,
+                      color=colors[i], edgecolor="none")
+        for bar, val in zip(bars, values):
+            ax.text(bar.get_x() + bar.get_width() / 2, bar.get_height() + 0.005,
+                    f"{val:.2f}", ha="center", va="bottom", fontsize=8,
+                    fontweight="bold", color="white")
+
+    ax.set_xticks(x + width * 1.5)
+    ax.set_xticklabels(model_names, fontsize=11)
+    ax.set_title("Model Performance Comparison", fontweight="bold", fontsize=14, pad=12)
+    ax.set_xlabel("Models", fontsize=11)
+    ax.set_ylabel("Score", fontsize=11)
+    ax.set_ylim(0, 1.12)
+    ax.legend(fontsize=9, loc="upper left")
+    ax.spines["top"].set_visible(False)
+    ax.spines["right"].set_visible(False)
+
+    plt.tight_layout()
+    plt.savefig(save_path, dpi=150, bbox_inches="tight", facecolor=fig.get_facecolor())
+    plt.close()
+    plt.style.use("default")
+    print(f"  Dark model performance chart saved to {save_path}")
+
+
+def plot_confusion_matrix_dark(cm, model_name, save_path="outputs/confusion_matrix.png"):
+    """
+    Plot a dark-themed confusion matrix heatmap with coolwarm colormap.
+    Designed for GitHub README embedding.
+
+    Args:
+        cm: Confusion matrix array
+        model_name: Name of the model
+        save_path: Path to save the plot
+    """
+    os.makedirs(os.path.dirname(save_path), exist_ok=True)
+
+    plt.style.use("dark_background")
+
+    fig, ax = plt.subplots(figsize=(5, 4))
+    sns.heatmap(
+        cm, annot=True, fmt="d", cmap="coolwarm",
+        xticklabels=["Fake", "Real"],
+        yticklabels=["Fake", "Real"],
+        ax=ax, linewidths=1, linecolor="#333",
+        annot_kws={"size": 14, "weight": "bold"},
+    )
+    ax.set_xlabel("Predicted", fontsize=12)
+    ax.set_ylabel("Actual", fontsize=12)
+    ax.set_title(f"Confusion Matrix — {model_name}", fontweight="bold", fontsize=13, pad=10)
+
+    plt.tight_layout()
+    plt.savefig(save_path, dpi=150, bbox_inches="tight", facecolor=fig.get_facecolor())
+    plt.close()
+    plt.style.use("default")
+    print(f"  Dark confusion matrix saved to {save_path}")
